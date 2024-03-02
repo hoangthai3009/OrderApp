@@ -7,6 +7,7 @@ import 'package:order_app/providers/socket_provider.dart';
 import 'package:order_app/screens/order_screen.dart';
 import 'package:order_app/screens/product_detail_screen.dart';
 import 'package:order_app/screens/product_type_list_screen.dart';
+import 'package:order_app/screens/review_screen.dart';
 import 'package:order_app/services/api/product_service.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,7 @@ class _ProductScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     var socketProvider = Provider.of<SocketProvider>(context, listen: false);
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         // Xử lý sự kiện khi người dùng cố gắng quay về từ ProductListScreen
@@ -150,7 +152,7 @@ class _ProductScreenState extends State<ProductListScreen> {
                 crossAxisSpacing: 8.0, // Khoảng cách giữa các cột
                 mainAxisSpacing: 8.0, // Khoảng cách giữa các dòng
                 childAspectRatio:
-                    0.73, // Tỷ lệ giữa chiều rộng và chiều cao của mỗi item
+                    0.7, // Tỷ lệ giữa chiều rộng và chiều cao của mỗi item
               ),
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
@@ -243,7 +245,15 @@ class _ProductScreenState extends State<ProductListScreen> {
                         ),
                       );
                     },
-                    child: const Text('Thêm vào đơn hàng'),
+                    child: const Center(
+                      child: Text(
+                        "Thêm món",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -279,6 +289,19 @@ class _ProductScreenState extends State<ProductListScreen> {
             onTap: () {
               // Xử lý khi người dùng chọn Trang chủ
               Navigator.pop(context); // Đóng Drawer
+            },
+          ),
+          ListTile(
+            title: const Text('Đánh giá'),
+            onTap: () {
+              // Xử lý khi người dùng chọn Đơn hàng
+              Navigator.pop(context); // Đóng Drawer
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ReviewScreen(),
+                ),
+              );
             },
           ),
           ListTile(

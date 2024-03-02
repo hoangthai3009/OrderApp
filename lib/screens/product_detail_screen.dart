@@ -110,7 +110,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             onPressed: () {
               _addToCart(context);
             },
-            child: const Text('Thêm vào đơn hàng'),
+            child: const Text(
+              'Thêm món',
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
           ),
         ],
       ),
