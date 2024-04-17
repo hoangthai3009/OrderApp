@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 class OrderService {
   static Future<void> placeOrder(
       BuildContext context, CartProvider cartProvider) async {
-    String apiUrl = 'http://$ip:3000/api/v1/order';
+    String apiUrl = 'http://$ip:3000/api/v1/orders';
 
     // Prepare data from cartProvider
     Map<String, dynamic> orderData = {
@@ -48,7 +48,7 @@ class OrderService {
     CartProvider cartProvider =
         Provider.of<CartProvider>(context, listen: false);
     String apiUrl =
-        'http://$ip:3000/api/v1/order/table-number/${cartProvider.tableRoom}';
+        'http://$ip:3000/api/v1/orders/table/${cartProvider.tableRoom}';
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -61,10 +61,14 @@ class OrderService {
   }
 
   static Future<void> cancelledOrder(String id) async {
-    final url = Uri.parse('http://$ip:3000/api/v1/order/$id/change-status?status=cancelled');
+    final url = Uri.parse('http://$ip:3000/api/v1/orders/${id}/change-status');
 
     try {
-      final response = await http.put(url);
+      final response = await http.put(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode({"status": "CANCELLED"}),);
 
       if (response.statusCode == 200) {
         // Successful API response

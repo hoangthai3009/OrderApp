@@ -95,9 +95,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
       },
     );
   }
-Widget? _buildTrailing(OrderItem order) {
+
+  Widget? _buildTrailing(OrderItem order) {
     // Thêm điều kiện dựa trên trạng thái của đơn hàng
-    if (order.status == 'pending') {
+    if (order.status == 'PENDING') {
       return IconButton(
         icon: Icon(Icons.cancel),
         onPressed: () {
@@ -108,6 +109,7 @@ Widget? _buildTrailing(OrderItem order) {
       return null; // Trả về null nếu không có điều kiện nào được đáp ứng
     }
   }
+
   void _showOrderDetails(OrderItem order) {
     showModalBottomSheet(
       context: context,
@@ -215,7 +217,8 @@ Widget? _buildTrailing(OrderItem order) {
 
               if (allOrdersCompleted) {
                 // Nếu tất cả các đơn hàng đã hoàn thành, thực hiện thanh toán
-                TableService.releaseTable(cartProvider.tableRoom);
+                TableService.changeStatusTable(
+                    cartProvider.tableRoom, "AVAILABLE");
                 Navigator.of(context).popUntil((route) => route.isFirst);
               } else {
                 // Nếu có đơn hàng chưa hoàn thành, hiển thị thông báo hoặc thực hiện hành động phù hợp
@@ -238,7 +241,7 @@ Widget? _buildTrailing(OrderItem order) {
   Future<double> _calculateTotalAmount() async {
     List<OrderItem> orders = await _fetchOrders();
     double totalAmount = orders
-        .where((order) => order.status == 'completed')
+        .where((order) => order.status == 'COMPLETED')
         .fold(
             0.0,
             (sum, order) =>
@@ -254,6 +257,6 @@ Widget? _buildTrailing(OrderItem order) {
   Future<bool> _checkAllOrdersCompleted() async {
     List<OrderItem> orders = await _fetchOrders();
     return orders.every(
-        (order) => order.status == 'completed' || order.status == 'cancelled');
+        (order) => order.status == 'COMPLETED' || order.status == 'CANCELLED');
   }
 }

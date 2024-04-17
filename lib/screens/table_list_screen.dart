@@ -47,7 +47,7 @@ class _TableScreenState extends State<TableListScreen> {
               onPressed: () async {
                 Provider.of<CartProvider>(context, listen: false)
                     .setTableRoom(tableNumber);
-                await TableService.occupyTable(tableNumber);
+                await TableService.changeStatusTable(tableNumber, "OCCUPIED");
                 Navigator.pushReplacementNamed(context, '/productList');
               },
               child: const Text('Xác nhận'),
@@ -68,7 +68,7 @@ class _TableScreenState extends State<TableListScreen> {
         itemCount: tables.length,
         itemBuilder: (context, index) {
           MyTable table = tables[index];
-          bool isAvailable = table.status == 'available';
+          bool isAvailable = table.status == 'AVAILABLE';
 
           return Card(
             color: isAvailable ? Colors.green[100] : Colors.grey[300],
@@ -81,7 +81,7 @@ class _TableScreenState extends State<TableListScreen> {
                 ),
               ),
               subtitle: Text(
-                'Trạng thái: ${isAvailable ? 'Có thể đặt bàn' : (table.status == 'reserved' ? 'Bàn đã được đặt trước' : 'Bàn đang được đặt')}',
+                'Trạng thái: ${isAvailable ? 'Có thể đặt bàn' : (table.status == 'RESERVED' ? 'Bàn đã được đặt trước' : 'Bàn đang được đặt')}',
                 style: TextStyle(
                   color: isAvailable ? Colors.green : Colors.grey,
                 ),

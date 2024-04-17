@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:order_app/constants.dart';
 import 'package:order_app/models/review.dart';
 import 'package:order_app/services/api/review_service.dart';
 
@@ -26,6 +27,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Future<void> _loadReviews() async {
     try {
       List<Review> reviews = await _reviewService.getReviews();
+      for (var review in reviews) {
+        final emotion = await _reviewService.predictEmotion(review.comment);
+        review.emotion = emotion;
+      }
       setState(() {
         _reviews = reviews;
       });
@@ -56,7 +61,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Đánh giá'),
+        title: const Text('Danh sách đánh giá'),
       ),
       body: Column(
         children: [
@@ -68,7 +73,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 return Card(
                   margin: const EdgeInsets.all(8),
                   child: ListTile(
-                    title: Text(review.customerName),
+                    title: Text(
+                      review.customerName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -91,6 +100,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         ),
                       ],
                     ),
+                    trailing: _buildEmotionIcon(review.emotion.toString()),
                   ),
                 );
               },
@@ -114,6 +124,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
+  Widget _buildEmotionIcon(String emotion) {
+    switch (emotion) {
+      case 'Negative':
+        return const Icon(Icons.sentiment_very_dissatisfied, color: Colors.red);
+      case 'Positive':
+        return const Icon(Icons.sentiment_very_satisfied, color: Colors.green);
+      case 'Neutral':
+        return const Icon(Icons.sentiment_neutral, color: Colors.blue);
+      default:
+        return const Icon(Icons.sentiment_neutral,
+            color: Colors.grey); // Xử lý trường hợp mặc định
+    }
+  }
+
   Widget _buildAddReviewForm() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -123,20 +147,29 @@ class _ReviewScreenState extends State<ReviewScreen> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Tên của bạn'),
+              decoration: const InputDecoration(
+                labelText: 'Nhập tên của bạn',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              ),
             ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _commentController,
-              decoration: const InputDecoration(labelText: 'Bình luận'),
+              decoration: const InputDecoration(
+                labelText: 'Nhập đánh giá',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
+              ),
             ),
             const SizedBox(height: 16),
             RatingBar.builder(
               initialRating: _rating,
               minRating: 1,
               direction: Axis.horizontal,
-              allowHalfRating: false,
+              allowHalfRating: true,
               itemCount: 5,
-              itemSize: 40.0,
+              itemSize: 30.0,
               itemBuilder: (context, _) => const Icon(
                 Icons.star,
                 color: Colors.amber,
@@ -149,6 +182,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
             const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -157,7 +191,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     });
                     _postReview();
                   },
-                  child: const Text('Bình luận'),
+                  child: const Text('Đánh giá'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(

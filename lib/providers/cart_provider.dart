@@ -49,4 +49,14 @@ class CartProvider extends ChangeNotifier {
 
     return totalAmount;
   }
+
+  int calculateTotalQuantity() {
+    int totalQuantity = 0;
+
+    for (CartItem cartItem in _cartItems) {
+      totalQuantity += cartItem.quantity;
+    }
+
+    return totalQuantity;
+  }
 }

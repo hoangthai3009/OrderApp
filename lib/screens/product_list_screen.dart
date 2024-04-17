@@ -10,6 +10,7 @@ import 'package:order_app/screens/product_type_list_screen.dart';
 import 'package:order_app/screens/review_screen.dart';
 import 'package:order_app/services/api/product_service.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart' as badges;
 
 class ProductListScreen extends StatefulWidget {
   @override
@@ -55,12 +56,12 @@ class _ProductScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     var socketProvider = Provider.of<SocketProvider>(context, listen: false);
+    CartProvider cartProvider = context.watch<CartProvider>();
+    int totalQuantity = cartProvider.calculateTotalQuantity();
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
-        // Xử lý sự kiện khi người dùng cố gắng quay về từ ProductListScreen
         print('Quay về từ ProductListScreen được chặn');
-        // Trả về true nếu muốn cho phép quay về, ngược lại trả về false
         return false;
       },
       child: Scaffold(
@@ -74,12 +75,14 @@ class _ProductScreenState extends State<ProductListScreen> {
           ),
           title: const Text('Danh sách sản phẩm'),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.shopping_cart),
-              onPressed: () {
+            badges.Badge(
+              position: badges.BadgePosition.topEnd(end: 15),
+              badgeContent: Text(totalQuantity.toString()),
+              child: const Icon(Icons.shopping_cart),
+              onTap: () {
                 Navigator.pushNamed(context, '/cart');
               },
-            ),
+            )
           ],
         ),
         drawer: _buildDrawer(),
@@ -100,7 +103,8 @@ class _ProductScreenState extends State<ProductListScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Tìm kiếm',
                     prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
                   ),
                 ),
               ),
@@ -121,7 +125,7 @@ class _ProductScreenState extends State<ProductListScreen> {
                     },
                     child: const Column(
                       children: [
-                        Icon(Icons.fastfood, size: 32.0),
+                        Icon(Icons.fastfood_outlined, size: 32.0),
                         Text('Đồ ăn'),
                       ],
                     ),
@@ -138,7 +142,7 @@ class _ProductScreenState extends State<ProductListScreen> {
                     },
                     child: const Column(
                       children: [
-                        Icon(Icons.local_drink, size: 32.0),
+                        Icon(Icons.local_drink_outlined, size: 32.0),
                         Text('Đô uống'),
                       ],
                     ),

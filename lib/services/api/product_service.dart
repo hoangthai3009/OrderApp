@@ -5,7 +5,7 @@ import 'package:order_app/models/product.dart';
 
 class ProductService {
   static Future<List<Product>> fetchProductData() async {
-    const String apiUrl = 'http://$ip:3000/api/v1/product';
+    const String apiUrl = 'http://$ip:3000/api/v1/products';
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -19,7 +19,7 @@ class ProductService {
 
   static Future<List<Product>> searchProducts(String keyword) async {
     final String apiUrl =
-        'http://$ip:3000/api/v1/product/search?keyword=$keyword';
+        'http://$ip:3000/api/v1/products/search?keyword=$keyword';
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -32,7 +32,7 @@ class ProductService {
   }
 
   static Future<List<Product>> fetchProductsByType(String productType) async {
-    final String apiUrl = 'http://$ip:3000/api/v1/product/search/$productType';
+    final String apiUrl = 'http://$ip:3000/api/v1/products/search/$productType';
 
     final response = await http.get(Uri.parse(apiUrl));
 
